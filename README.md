@@ -2,7 +2,7 @@ task
 ====
 1. По запросу на http://somedomain/hello отдает <<Hello World>> через 10 секунд
 
-2. По запросу на http://somedomain/redirect?url=<url> происходитпереадресация на указанный url
+2. По запросу на http://somedomain/redirect?url=<url> происходит переадресация на указанный url (пример: "http://localhost:8080/redirect?url=http://google.com.ua")
 
 3. По запросу на http://somedomain/status выдается статистика:
 
