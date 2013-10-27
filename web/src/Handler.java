@@ -9,7 +9,9 @@ import io.netty.util.CharsetUtil;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
@@ -21,6 +23,9 @@ import static io.netty.handler.codec.http.HttpMethod.GET;
 
 public class Handler extends SimpleChannelInboundHandler<Object> {
 
+    ArrayList logList = new ArrayList();
+    Log getLog = new Log();
+    String uri;
     private int reqCount = 0;
     private int redCount = 0;
     private HashMap<String, ReqInfo> reqStat = new HashMap<String, ReqInfo>();
@@ -110,10 +115,7 @@ public class Handler extends SimpleChannelInboundHandler<Object> {
 
     private String logToString() throws IOException, ClassNotFoundException {
 
-        Date date = new Date();
         StringBuilder sb = new StringBuilder();
-        int i = 0;
-        InetAddress ip = InetAddress.getLocalHost();
 
         sb.append("<html><head>")
                 .append("</head><body>").append("<table border=\"3\">")
@@ -123,24 +125,33 @@ public class Handler extends SimpleChannelInboundHandler<Object> {
                 .append("<th>").append("Timestamp").append("</th>")
                 .append("<th>").append("sent_bytes").append("</th>")
                 .append("<th>").append("received_bytes").append("</th>")
-                .append("<th>").append("speed (bytes/sec)").append("</th></tr>")
+                .append("<th>").append("speed (bytes/sec)").append("</th></tr>");
+        for (int i = 0; i < logList.size(); i++) {
+            sb.append("<tr><td>").append(i).append("</td>")
 
-                .append("<tr><td>").append(i++).append("</td>")
-                .append("<td>").append(ip.getHostAddress()).append("</td>")
-                .append("<td>").append("uri").append("</td>")
-                .append("<td>").append(new Timestamp(date.getTime())).append("</td>")
-                .append("<td>").append("bytes").append("</td><")
-                .append("<td>").append("bytes").append("</td>")
-                .append("<td>").append("(bytes/sec)").append("</td></tr>")
-                .append("</tr></table>").append("</body></html>");
+                    .append("<td>").append(logList.get(i)).append("</td>");
+        }
+
+        sb.append("</tr></table>").append("</body></html>");
+
         return sb.toString();
 
     }
 
     public void channelRead(ChannelHandlerContext ctx, FullHttpRequest request)
             throws Exception {
+        StringBuilder html = new StringBuilder();
+        Date date = new Date();
 
-        String uri = request.getUri();
+        uri = request.getUri();
+
+        logList.add(html.append(getLog.src_ip = InetAddress.getByAddress(InetAddress.getLocalHost().getAddress())).append("</td>")
+                .append("<td>").append(getLog.uri = uri).append("</td>")
+                .append("<td>").append(getLog.timeStamp = new Timestamp(date.getTime())).append("</td>")
+                .append("<td>").append(getLog.send_byte).append("</td>")
+                .append("<td>").append(getLog.received_byte).append("</td>")
+                .append("<td>").append(getLog.speed).append("</td>"));
+
         final QueryStringDecoder dec = new QueryStringDecoder(uri);
         String redURL = null;
 
@@ -250,6 +261,39 @@ public class Handler extends SimpleChannelInboundHandler<Object> {
         public RedInfo(int count, String url) {
             this.count = count;
             //this.redURL = url;
+        }
+    }
+
+    public class Log {
+        InetAddress src_ip;
+        String uri;
+        Timestamp timeStamp;
+        int send_byte;
+        int received_byte;
+        double speed;
+
+        public void setSrc_ip(InetAddress src_ip) throws UnknownHostException {
+            this.src_ip = src_ip;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public void setTimeStamp(Timestamp timeStamp) {
+            this.timeStamp = timeStamp;
+        }
+
+        public void setSend_byte(int send_byte) {
+            this.send_byte = send_byte;
+        }
+
+        public void setReceived_byte(int received_byte) {
+            this.received_byte = received_byte;
+        }
+
+        public void setSpeed(double speed) {
+            this.speed = speed;
         }
     }
 }
