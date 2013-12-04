@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class YandexMarket {
 
 
-    public void start() throws IOException {
+    public void start() throws IOException, InterruptedException {
 
         SearchParam searchParam = new SearchParam();
 
@@ -24,64 +24,68 @@ public class YandexMarket {
         BufferedReader searchBuf = new BufferedReader(new InputStreamReader(System.in));
 
         String searchLine = searchBuf.readLine();
+        for (int i = 1; i < 3; i++) {
+            Thread.sleep(10000);
+            URL url = new URL("http://www.market.yandex.ua/search.xml?text=" + URLEncoder.encode(searchLine) + "&cvredirect=2" + "page%3D2&"+"page=" + i);
+            System.out.println(url);
 
-        URL url = new URL("http://www.market.yandex.ua/search.xml?text=" + URLEncoder.encode(searchLine) + "&cvredirect=2");
-        System.out.println(url);
+            StringBuilder sb = new StringBuilder();
 
-        StringBuilder sb = new StringBuilder();
+            try {
+                String s = getString(url, sb);
 
-        try {
-            String s = getString(url, sb);
+                System.out.println("Количество символов: " + s.length());
 
-            System.out.println("Количество символов: " + s.length());
+                final String SEARCHFIRST = "__info";
+                final String SEARCHLAST = "</div></div></div>";
 
-            final String SEARCHFIRST = "__info";
-            final String SEARCHLAST = "</div></div></div>";
+                int start, end;
 
-            int start, end;
+                StringBuilder priceBuild = new StringBuilder();
+                StringBuilder shopBuild = new StringBuilder();
+                StringBuilder linkShopBuild = new StringBuilder();
+                StringBuilder nameProdBuild = new StringBuilder();
 
-            StringBuilder priceBuild = new StringBuilder();
-            StringBuilder shopBuild = new StringBuilder();
-            StringBuilder linkShopBuild = new StringBuilder();
-            StringBuilder nameProdBuild = new StringBuilder();
+                StringBuilder buildPage = new StringBuilder();
 
-            StringBuilder buildPage = new StringBuilder();
+                while ((s.indexOf(SEARCHFIRST) != -1)) {
+                    start = s.indexOf(SEARCHFIRST) + 8;
+                    end = s.indexOf(SEARCHLAST, start);
 
-            while ((s.indexOf(SEARCHFIRST) != -1)) {
-                start = s.indexOf(SEARCHFIRST) + 8;
-                end = s.indexOf(SEARCHLAST, start);
+                    s.substring(start, end);
 
-                s.substring(start, end);
+                    searchParam.getPrice(listNum, s, priceBuild);
 
-                searchParam.getPrice(listNum, s, priceBuild);
+                    searchParam.getShop(listShop, s, shopBuild);
 
-                searchParam.getShop(listShop, s, shopBuild);
+                    searchParam.getLinkShop(listLinkShop, s, linkShopBuild);
 
-                searchParam.getLinkShop(listLinkShop, s, linkShopBuild);
+                    searchParam.getName(listNameProd, s, nameProdBuild);
 
-                searchParam.getName(listNameProd, s, nameProdBuild);
+                    buildPage.delete(0, Integer.MAX_VALUE);
+                    buildPage.append(s);
 
-                buildPage.delete(0, Integer.MAX_VALUE);
-                buildPage.append(s);
+                    buildPage.delete(start - 8, end + 1);
 
-                buildPage.delete(start - 8, end + 1);
+                    s = buildPage.toString();
 
-                s = buildPage.toString();
+
+                }
+            } catch (Exception e) {
+
             }
-        } catch (Exception e) {
 
+
+            System.out.println(listNum);
+            System.out.println(listShop);
+           // System.out.println(listLinkShop);
+            System.out.println(listNameProd);
+
+            System.out.println("Количество элементов: " + listNum.size());
+            System.out.println("Количество элементов: " + listShop.size());
+           // System.out.println("Количество элементов: " + listLinkShop.size());
+            System.out.println("Количество элементов: " + listNameProd.size());
         }
-
-
-        System.out.println(listNum);
-        System.out.println(listShop);
-        System.out.println(listLinkShop);
-        System.out.println(listNameProd);
-
-        System.out.println("Количество элементов: " + listNum.size());
-        System.out.println("Количество элементов: " + listShop.size());
-        System.out.println("Количество элементов: " + listLinkShop.size());
-        System.out.println("Количество элементов: " + listNameProd.size());
     }
 
     private String getString(URL url, StringBuilder sb) throws IOException {
