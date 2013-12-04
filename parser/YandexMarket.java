@@ -25,7 +25,8 @@ public class YandexMarket {
 
         String searchLine = searchBuf.readLine();
         for (int i = 1; i < 3; i++) {
-            Thread.sleep(10000);
+            Thread.sleep(1000);
+            @Deprecated
             URL url = new URL("http://www.market.yandex.ua/search.xml?text=" + URLEncoder.encode(searchLine) + "&cvredirect=2" + "page%3D2&"+"page=" + i);
             System.out.println(url);
 
@@ -159,9 +160,7 @@ public class YandexMarket {
 
             sNameProd = s.substring(startNameProd, endNameProd);
 
-            String linkShop = sNameProd.replace("amp;", "");
-
-            String trimName = linkShop.substring(linkShop.indexOf(">") + 1, linkShop.indexOf("</a>"));
+            String trimName = sNameProd.substring(sNameProd.indexOf(">") + 1, sNameProd.indexOf("</a>"));
             String delB = trimName.replace("<b>", "");
 
             listNameProd.add(delB.replace("</b>", ""));
