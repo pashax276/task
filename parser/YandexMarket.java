@@ -17,6 +17,7 @@ public class YandexMarket {
         ArrayList listShop = new ArrayList();
         ArrayList listLinkShop = new ArrayList();
         ArrayList listNameProd = new ArrayList();
+        ArrayList<Integer> pageNumber = new ArrayList<Integer>();
 
 
         System.out.println("Вы выбрали market.yandex.ua");
@@ -24,16 +25,31 @@ public class YandexMarket {
         BufferedReader searchBuf = new BufferedReader(new InputStreamReader(System.in));
 
         String searchLine = searchBuf.readLine();
-        for (int i = 1; i < 3; i++) {
-            Thread.sleep(1000);
+
+        System.out.println("Количество страниц: " + pageNumber);
+
+        int pages = 1;
+
+        for (int i = 1; i <= pages; i++) {
+
+            Thread.sleep(100);
+
             @Deprecated
-            URL url = new URL("http://www.market.yandex.ua/search.xml?text=" + URLEncoder.encode(searchLine) + "&cvredirect=2" + "page%3D2&"+"page=" + i);
+            URL url = new URL("http://www.market.yandex.ua/search.xml?text=" + URLEncoder.encode(searchLine) + "&cvredirect=2" + "page%3D2&" + "page=" + i);
             System.out.println(url);
 
             StringBuilder sb = new StringBuilder();
+            StringBuilder priceBuild = new StringBuilder();
+            StringBuilder shopBuild = new StringBuilder();
+            StringBuilder linkShopBuild = new StringBuilder();
+            StringBuilder nameProdBuild = new StringBuilder();
+
+            StringBuilder buildPage = new StringBuilder();
+            StringBuilder buildPageNumber = new StringBuilder();
 
             try {
                 String s = getString(url, sb);
+               // pages = pageNumber.get(0);
 
                 System.out.println("Количество символов: " + s.length());
 
@@ -42,18 +58,15 @@ public class YandexMarket {
 
                 int start, end;
 
-                StringBuilder priceBuild = new StringBuilder();
-                StringBuilder shopBuild = new StringBuilder();
-                StringBuilder linkShopBuild = new StringBuilder();
-                StringBuilder nameProdBuild = new StringBuilder();
+                searchParam.getPageNumber(pageNumber, searchLine, s, buildPageNumber);
 
-                StringBuilder buildPage = new StringBuilder();
-
-                while ((s.indexOf(SEARCHFIRST) != -1)) {
+                while ((s.contains(SEARCHFIRST))) {
                     start = s.indexOf(SEARCHFIRST) + 8;
                     end = s.indexOf(SEARCHLAST, start);
 
                     s.substring(start, end);
+
+
 
                     searchParam.getPrice(listNum, s, priceBuild);
 
@@ -63,28 +76,28 @@ public class YandexMarket {
 
                     searchParam.getName(listNameProd, s, nameProdBuild);
 
+
+
                     buildPage.delete(0, Integer.MAX_VALUE);
                     buildPage.append(s);
 
                     buildPage.delete(start - 8, end + 1);
 
                     s = buildPage.toString();
-
-
                 }
+
             } catch (Exception e) {
 
             }
 
-
             System.out.println(listNum);
             System.out.println(listShop);
-           // System.out.println(listLinkShop);
+
             System.out.println(listNameProd);
 
             System.out.println("Количество элементов: " + listNum.size());
             System.out.println("Количество элементов: " + listShop.size());
-           // System.out.println("Количество элементов: " + listLinkShop.size());
+            System.out.println("Количество страниц: " + pageNumber.get(0));
             System.out.println("Количество элементов: " + listNameProd.size());
         }
     }
@@ -143,10 +156,6 @@ public class YandexMarket {
             linkShopBuild.delete(startLinkShop - (searchShopLinkFirst + 1), endLinkShop + 1);
         }
 
-        public void getOnStock() {
-
-        }
-
         public void getName(ArrayList listNameProd, String s, StringBuilder nameProdBuild) {
             int startNameProd;
             int endNameProd;
@@ -155,8 +164,8 @@ public class YandexMarket {
             final String SearchShopLinkFirst = "p-link\" href=";
             int searchShopLinkFirst = SearchShopLinkFirst.length();
 
-            startNameProd = s.indexOf(SearchShopLinkFirst) + searchShopLinkFirst + 1;
-            endNameProd = s.indexOf("</h3>", startNameProd);
+            startNameProd = (s.indexOf("s__name") + 10);
+            endNameProd = (s.indexOf("</h3>", startNameProd));
 
             sNameProd = s.substring(startNameProd, endNameProd);
 
@@ -186,6 +195,22 @@ public class YandexMarket {
             shopBuild.append(s);
 
             shopBuild.delete(startShop - 8, endShop + 1);
+        }
+
+        private void getPageNumber(ArrayList<Integer> pageNumber, String searchLine, String s, StringBuilder buildPageNumber) {
+            int startPageNumber = s.indexOf("h-stat\">") + 8;
+            int endPageNumber = s.indexOf(".", startPageNumber);
+
+            String numberLine = s.substring(startPageNumber, endPageNumber);
+
+            String numberPage = numberLine.replace("«" + searchLine + "» — ", "");
+            int pageNumer = Integer.parseInt(numberPage);
+            pageNumber.add(pageNumer);
+
+            buildPageNumber.delete(0, Integer.MAX_VALUE);
+            buildPageNumber.append(s);
+
+            buildPageNumber.delete(startPageNumber - 8, endPageNumber + 1);
 
         }
     }
