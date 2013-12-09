@@ -17,7 +17,7 @@ public class YandexMarket {
         ArrayList listShop = new ArrayList();
         ArrayList listLinkShop = new ArrayList();
         ArrayList listNameProd = new ArrayList();
-        ArrayList<Integer> pageNumber = new ArrayList<Integer>();
+        ArrayList<Double> pageNumber = new ArrayList<Double>();
 
 
         System.out.println("Вы выбрали market.yandex.ua");
@@ -26,9 +26,11 @@ public class YandexMarket {
 
         String searchLine = searchBuf.readLine();
 
+        pageNumber.add(0, 1.0);
+
         System.out.println("Количество страниц: " + pageNumber);
 
-        int pages = 1;
+        double pages = 1;
 
         for (int i = 1; i <= pages; i++) {
 
@@ -49,7 +51,6 @@ public class YandexMarket {
 
             try {
                 String s = getString(url, sb);
-               // pages = pageNumber.get(0);
 
                 System.out.println("Количество символов: " + s.length());
 
@@ -66,8 +67,6 @@ public class YandexMarket {
 
                     s.substring(start, end);
 
-
-
                     searchParam.getPrice(listNum, s, priceBuild);
 
                     searchParam.getShop(listShop, s, shopBuild);
@@ -75,8 +74,6 @@ public class YandexMarket {
                     searchParam.getLinkShop(listLinkShop, s, linkShopBuild);
 
                     searchParam.getName(listNameProd, s, nameProdBuild);
-
-
 
                     buildPage.delete(0, Integer.MAX_VALUE);
                     buildPage.append(s);
@@ -89,6 +86,8 @@ public class YandexMarket {
             } catch (Exception e) {
 
             }
+
+            pages = pageNumber.get(0);
 
             System.out.println(listNum);
             System.out.println(listShop);
@@ -197,7 +196,7 @@ public class YandexMarket {
             shopBuild.delete(startShop - 8, endShop + 1);
         }
 
-        private void getPageNumber(ArrayList<Integer> pageNumber, String searchLine, String s, StringBuilder buildPageNumber) {
+        private void getPageNumber(ArrayList pageNumber, String searchLine, String s, StringBuilder buildPageNumber) {
             int startPageNumber = s.indexOf("h-stat\">") + 8;
             int endPageNumber = s.indexOf(".", startPageNumber);
 
@@ -205,7 +204,8 @@ public class YandexMarket {
 
             String numberPage = numberLine.replace("«" + searchLine + "» — ", "");
             int pageNumer = Integer.parseInt(numberPage);
-            pageNumber.add(pageNumer);
+            double  page = (Math.round(pageNumer / 10));
+            pageNumber.add(0, page);
 
             buildPageNumber.delete(0, Integer.MAX_VALUE);
             buildPageNumber.append(s);
