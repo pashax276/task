@@ -17,7 +17,7 @@ public class YandexMarket {
         ArrayList listShop = new ArrayList();
         ArrayList listLinkShop = new ArrayList();
         ArrayList listNameProd = new ArrayList();
-        ArrayList<Double> pageNumber = new ArrayList<Double>();
+        ArrayList<Integer> pageNumber = new ArrayList<Integer>();
 
 
         System.out.println("Вы выбрали market.yandex.ua");
@@ -26,7 +26,7 @@ public class YandexMarket {
 
         String searchLine = searchBuf.readLine();
 
-        pageNumber.add(0, 1.0);
+        pageNumber.add(0, 1);
 
         System.out.println("Количество страниц: " + pageNumber);
 
@@ -204,13 +204,21 @@ public class YandexMarket {
 
             String numberPage = numberLine.replace("«" + searchLine + "» — ", "");
             int pageNumer = Integer.parseInt(numberPage);
-            double  page = (Math.round(pageNumer / 10));
+            int page;
+
+            if ((pageNumer % 10) > 0) {
+                page = (Math.round(pageNumer / 10) + 1);
+            } else
+                page = (Math.round(pageNumer / 10));
+
             pageNumber.add(0, page);
 
             buildPageNumber.delete(0, Integer.MAX_VALUE);
             buildPageNumber.append(s);
 
             buildPageNumber.delete(startPageNumber - 8, endPageNumber + 1);
+
+            System.out.println(page);
 
         }
     }
