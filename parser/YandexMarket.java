@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class YandexMarket {
 
-
     public void start() throws IOException, InterruptedException {
 
         SearchParam searchParam = new SearchParam();
@@ -18,7 +17,6 @@ public class YandexMarket {
         ArrayList listLinkShop = new ArrayList();
         ArrayList listNameProd = new ArrayList();
         ArrayList<Integer> pageNumber = new ArrayList<Integer>();
-
 
         System.out.println("Вы выбрали market.yandex.ua");
         System.out.print("Что ищем: ");
@@ -91,7 +89,6 @@ public class YandexMarket {
 
             System.out.println(listNum);
             System.out.println(listShop);
-
             System.out.println(listNameProd);
 
             System.out.println("Количество элементов: " + listNum.size());
