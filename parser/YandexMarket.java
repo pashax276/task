@@ -30,7 +30,7 @@ public class YandexMarket {
 
         System.out.println("Количество страниц: " + pageNumber);
 
-        double pages = 1;
+        int pages = 1;
 
         for (int i = 1; i <= pages; i++) {
 
@@ -207,9 +207,9 @@ public class YandexMarket {
             int page;
 
             if ((pageNumer % 10) > 0) {
-                page = (Math.round(pageNumer / 10) + 1);
+                page = (pageNumer / 10) + 1;
             } else
-                page = (Math.round(pageNumer / 10));
+                page = (pageNumer / 10);
 
             pageNumber.add(0, page);
 
@@ -217,9 +217,6 @@ public class YandexMarket {
             buildPageNumber.append(s);
 
             buildPageNumber.delete(startPageNumber - 8, endPageNumber + 1);
-
-            System.out.println(page);
-
         }
     }
 }
