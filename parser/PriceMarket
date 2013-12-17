@@ -1,0 +1,88 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+
+/**
+ * Created by Павел on 12.12.13.
+ */
+public class PriceMarket {
+
+
+    public void start() throws IOException, InterruptedException {
+
+        ArrayList listNum = new ArrayList();
+        ArrayList listShop = new ArrayList();
+        ArrayList listLinkShop = new ArrayList();
+        ArrayList listNameProd = new ArrayList();
+        ArrayList<Integer> pageNumber = new ArrayList<Integer>();
+
+        System.out.println("Вы выбрали Price.ua");
+        System.out.print("Что ищем: ");
+        BufferedReader searchBuf = new BufferedReader(new InputStreamReader(System.in));
+
+        String searchLine = searchBuf.readLine();
+
+        URL url = new URL("http://price.ua/index.php?action=search/index&q=" + URLEncoder.encode(searchLine) + "&search_submit=true&rollback=true&noredirect=true");
+        System.out.println(url);
+
+        StringBuilder sb = new StringBuilder();
+        StringBuilder buildPage = new StringBuilder();
+
+        try {
+            String s = getString(url, sb);
+
+            System.out.println("Количество символов: " + s.length());
+
+          /*  final String SEARCHFIRST = "__info";
+            final String SEARCHLAST = "</div></div></div>";
+
+            int start, end;
+
+            while ((s.contains(SEARCHFIRST))) {
+                start = s.indexOf(SEARCHFIRST) + 8;
+                end = s.indexOf(SEARCHLAST, start);
+
+                s.substring(start, end);
+
+
+
+                buildPage.delete(0, Integer.MAX_VALUE);
+                buildPage.append(s);
+
+                buildPage.delete(start - 8, end + 1);
+
+                s = buildPage.toString();
+            }*/
+
+        } catch (Exception e) {
+
+        }
+
+/*        System.out.println(listNum);
+        System.out.println(listShop);
+        System.out.println(listNameProd);
+
+        System.out.println("Количество элементов: " + listNum.size());
+        System.out.println("Количество элементов: " + listShop.size());
+        System.out.println("Количество страниц: " + pageNumber.get(0));
+        System.out.println("Количество элементов: " + listNameProd.size());*/
+    }
+
+    private String getString(URL url, StringBuilder sb) throws IOException {
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+        char[] buf = new char[1000];
+        int rest;
+
+        do {
+            if ((rest = bufferedReader.read(buf)) > 0)
+                sb.append(new String(buf, 0, rest));
+        }
+        while (rest > 0);
+        return sb.toString();
+    }
+}
