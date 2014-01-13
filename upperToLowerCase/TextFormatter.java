@@ -30,7 +30,7 @@ public class TextFormatter {
 
         String fileOpenJar = sbJava.toString();
 
-        Pattern patternJar = Pattern.compile(new StringBuilder().append("([.][A-Z][\\w]*)").toString());
+        Pattern patternJar = Pattern.compile(new StringBuilder().append("([.][A-Z][\w]+\((.*)\))[\^)]").toString());
         Matcher matcherJar = patternJar.matcher(fileOpenJar);
 
         while (matcherJar.find()) {
@@ -41,10 +41,19 @@ public class TextFormatter {
 
         for (int i = 0; i < upperCaseWords.size(); i++) {
 
-            Matcher m = Pattern.compile("([A-Z])([A-Z]*)([A-Za-z][a-z0-9]*)").matcher(upperCaseWords.get(i));
+            Matcher m = Pattern.compile("([A-Z])([A-Z]*)([A-Za-z0-9]*)").matcher(upperCaseWords.get(i));
 
             while (m.find()) {
                 lowerCaseWords.add(m.group(1).toLowerCase() + m.group(2).toLowerCase() + m.group(3));
+
+                System.out.println("m.group(1) " + m.group(1));
+                System.out.println("m.group(1) length " + m.group(1).length());
+                System.out.println("-----------------------------------------");
+                System.out.println("m.group(2) " + m.group(2));
+                System.out.println("m.group(2) length " + m.group(2).length());
+                System.out.println("-----------------------------------------");
+                System.out.println("m.group(3) " + m.group(3));
+                System.out.println("m.group(3) length " + m.group(3).length());
 
             }
 
